@@ -1,7 +1,7 @@
 # WunderMatch
 
 WunderMatch is a small library that keeps a list of bounding boxes and can check if provided coordinates fall within
-the an existing bounding box.
+an existing bounding box.
 
 # Getting Started
 1. Clone this repository using the
