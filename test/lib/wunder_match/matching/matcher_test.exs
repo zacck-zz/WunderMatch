@@ -15,6 +15,11 @@ defmodule WunderMatch.Matching.MatcherTest do
   ]
 
   @error_lat {"name", 829.9}
+
+  # 2 pairs of numbers in file
+  @coords_length 2
+  # 4 pairs of numbers in file
+  @pairs_length 4
   describe "Matching " do
     test "constructs a point from lat long tuple" do
       {:ok, %Location{} = location} = Matcher.point(@lon_lat)
@@ -33,6 +38,16 @@ defmodule WunderMatch.Matching.MatcherTest do
 
       assert is_binary(area.id)
       assert %Geo.Polygon{} = area.bound
+    end
+
+    test "ingest function should return a list of lon_lat tuples" do
+      {:ok, pairs} = Matcher.ingest("test/fixtures/pairs.csv")
+
+      assert Enum.count(pairs) == @pairs_length
+
+      {:ok, [_, _] = coords} = Matcher.ingest("test/fixtures/coords.csv")
+
+      assert Enum.count(coords) == @coords_length
     end
   end
 end
