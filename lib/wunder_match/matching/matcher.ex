@@ -9,14 +9,18 @@ defmodule WunderMatch.Matching.Matcher do
   4. Match locations to areas
   5. Maintain a list of matched locations to areas
   """
-  alias Geo.Point
-  alias WunderMatch.Matching.Location
+  alias Geo.{Point, Polygon}
+  alias WunderMatch.Matching.{Location, Area}
+
+  @type coordinates() :: {number(), number()}
+  @type match_error() :: {:error, String.t()}
 
   @doc """
   This function builds a Location.
   It expects an attribute named coordinate which is expected to be a Geo.Point
   """
-  @spec point({number(), number()}) :: {:ok, Location.t()} | {:error, String.t()}
+  @spec point(coordinates()) :: {:ok, Location.t()}
+  @spec point(any()) :: match_error()
   def point({lon, lat}) when is_number(lon) and is_number(lat) do
     point = %Point{coordinates: {lat, lon}}
     location = %Location{coordinate: point}
@@ -25,5 +29,18 @@ defmodule WunderMatch.Matching.Matcher do
 
   def point(_) do
     {:error, "Point expects numbers for your x and y locations"}
+  end
+
+  @doc """
+  This function builds an area using a list of coordinates passed to it
+  """
+  @spec area(list(coordinates())) :: {:ok, Area.t()} | match_error()
+  def area(coords) do
+    # flip the positions of th the elments to use the correct boudaries
+    lat_lons = Enum.map(coords, fn {y, x} -> {x, y} end)
+    bound = %Polygon{coordinates: [lat_lons]}
+
+    area = %Area{bound: bound}
+    {:ok, area}
   end
 end
